@@ -1,0 +1,242 @@
+% !TEX program = xelatex
+% !TEX encoding = UTF-8 Unicode
+% !TEX input = Report.tex
+% !TEX output = Report.pdf
+
+\documentclass{article}
+
+
+
+\usepackage[table]{xcolor}
+\usepackage{xcolor}
+\usepackage{color,listings}
+
+\usepackage{svg}
+
+
+\usepackage{array}
+
+\usepackage{mathtools}
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.15}
+\usepackage{mathrsfs}
+\usetikzlibrary{arrows}
+\pagestyle{empty}
+
+\usepackage{multicol}
+
+
+\newcommand{\red}{\cellcolor{red!25}}
+\newcommand{\blue}{\cellcolor{blue!25}}
+
+\usepackage[left=1in, right=1in, top=1in, bottom=1in]{geometry}
+
+\newcommand{\textbigl}[1]{$\Bigg#1$\nobreak}
+\newcommand{\textbigr}[1]{\nobreak$\Bigg#1$}
+
+\newcommand*{\tabbox}[2][t]{
+    \vspace{0pt}\parbox[#1][3.7\baselineskip]{1cm}{\strut#2\strut}
+}
+
+\usepackage{graphicx}
+\graphicspath{ {./} }
+\usepackage[font=small,labelfont=bf]{caption}
+
+\usepackage{xcolor}
+
+\usepackage{multirow}
+
+\usepackage{tikz}
+\usetikzlibrary{matrix,fit, positioning}
+
+\usepackage{array}
+\newcommand{\PreserveBackslash}[1]{\let\temp=\\#1\let\\=\temp}
+\newcolumntype{C}[1]{>{\PreserveBackslash\centering}p{#1}}
+\newcolumntype{R}[1]{>{\PreserveBackslash\raggedleft}p{#1}}
+\newcolumntype{L}[1]{>{\PreserveBackslash\raggedright}p{#1}}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+
+\lstdefinestyle{customc}{
+    language={C++},
+    frame=L,
+    xleftmargin=\parindent,
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    captionpos=b,                    
+    keepspaces=true,                                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
+
+\lstdefinestyle{lua}{
+    language={[5.1]Lua},
+    frame=L,
+    xleftmargin=\parindent,
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    captionpos=b,                    
+    keepspaces=true,                                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
+\lstset{escapechar=@,style=customc}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+\fancyhead[L]{
+پروژه هوش مصنوعی - تشخیص اجتماع - الگوریتم فاخته
+}
+
+\usepackage{xepersian}
+\settextfont{XB Niloofar}
+
+
+\begin{document}
+\section*{مقدمه}
+هدف از برنامه‌ نوشته شده پیدا کردن مقدار ماکزیمم تابع $Q$ با استفاده از الگوریتم بهینه سازی فاخته است. الگوریتم فاخته مانند بقیه الگوریتم‌ها نیاز به یک ساختمان مشخص برای نشان دادن پاسخ‌ها(کروموزن در الگوریتم‌های ژنتیک) نیاز دارد. در اینجا این پاسخ‌ها به صورت آرایه‌ای به طول تعداد راس‌های گراف اصلی در نظر گرفته شده است که اگر عنصر $i$ام مقدار $j$ را داشته باشد یعنی این دور راس در یک گروه‌ قرار دارند. بنابرین به نوعی از گراف پیچیده‌ قبلی، درختی به عنوان درخت روابط اصلی بیرون می‌کشیم. عملگرهای مهمی که اینجا وجود‌ دارند، محاسبه $Q$، تخم گذاری فاخته‌ها و مهاجرت فاخته‌ها به سمت قسمت‌های بهتر است.
+
+\section*{کد}
+برای بخش‌های ذکر شده قبلی توضیحاتی درباره جزئیات پیاده سازی ارائه می‌دهیم.
+\subsection*{تابع $Q$}
+همانگونه که از تعریف مشخص است، نمی‌توان به صورت مستقیم از روی آرایه‌ی کوروموزوم، تشخصی داد که آیا دو راس در یک گروه‌ هستند یا خیر. برای همین ابتدا در ابتدای هر بار محاسبه این تابع، با استفاده از الگوریتم جستجوی اول عمق، $DFS$، گروه‌ها را به دست آورده و مقدار $Q$ را محاسبه می‌کنیم. تمام این عملیات‌ها در Problem.py انجام شده‌اند و کد نسبتا واضحی دارند. 
+
+\subsection*{تولید تخم‌های اولیه تصادفی}
+ابتدا به سادگی می‌توان ثابت کرد که اگر درجه‌ راسی صفر باشد آنگاه آزادیم که آن را در هر گروه دلخواهی قرار دهیم. بنابرین در صورتی که درجه راسی صفر باشد به راس ۰ وصل شده است در غیر این صورت به یکی از همسایه‌های خود که به صورت تصادفی انتخاب شده است. پیاده سازی این تابع در فایل RadomWalk قابل مشاهده است.
+\begin{latin}
+\begin{lstlisting}[style=lua]
+function randomChromosome()
+	let x be a new chromosome
+	for i in 0 ... n do
+		if degree of i in graph == 0 do
+			x.genomes[i] = 0
+		else
+			x.genomes[i] = select randomly from ajdacency list of i
+		end
+	end
+	return x
+end
+\end{lstlisting}
+\end{latin}
+
+\subsection*{تخم‌ گذاری هر کدام از فاخته‌ها}
+در ابتدا تابعی داریم که به ازای یک فاخته مشخص، در فاصله خاصی از آن تخمی جدید می‌سازد. در این‌جا باید توجه کرد که در مقاله اصلی از نرم-۲ به عنوان فاصله طبیعی بین دو جواب استفاده شده است در حالی که در این مثال به دلیل ترتیب ناپذیر بودن رئوس نمی‌توان این کار را انجام داد. برای مثال دو کرورموزون زیر را در نظر بگیرید.
+
+\setlength\arraycolsep{20pt}
+\[
+\begin{array}{cc}
+X = \left(
+\begin{tabular}{|c|c|c|c|}
+\hline
+ 0 & 1 & 2 & 3\\
+ 1 &  0 & 1 & 1\\\hline
+\end{tabular}
+\right)
+&
+X = \left(
+\begin{tabular}{|c|c|c|c|}
+\hline
+ 0 & 1 & 2 & 3\\
+ 2 &  0 & 3 & 1\\\hline
+\end{tabular}
+\right)
+\end{array}
+\]
+
+به سادگی می‌توان دید که هر دو کروموزون بالا یک افراز از راس‌ها را نشان می‌دهند و معادل هم هستند. در حالی که می‌توان دید نرم-۲ آنها عددی مخالف صفر است.
+به همین دلیل در اینجا فاصله دو کروموزون به صورت زوج‌های $i$ و $j$ی تعریف شده که در یکی از کروموزون‌ها در یک گروه واقع شده‌اند و در دیگری در گروه‌ متفاوتی واقع‌اند. با این حساب برای تولید کردن تخم‌هایی در فاصله $L$ می‌توان $\sqrt{L}$ تا از کوروموزون‌ها را تغییر داد. یا به عبارت دیگر
+\begin{latin}
+\begin{lstlisting}[style=lua]
+function ChromosomeAtL(c, l)
+	let x be a copy of c
+	for _ in 0 ... sqrt(l) do
+		i = select a random vertex from graph
+		x.genomes[i] = randomly select from i`s neighbours
+	end
+	return c
+end
+\end{lstlisting}
+\end{latin}
+
+می‌توان به سادگی دید که جایگزین کردن $L$ و $\sqrt{L}$ تفاوتی در اصل الگوریتم ایجاد نمی‌کند و حتی با تغییر پارامتر آلفا(بعدا توضیح داده می‌شود) می‌توان به طور کامل اثر این تغییر را خنثی کرد.
+
+تابع GenerateWithELR از فایل RandomWalk برای پیاده‌سازی توضیحات بالا استفاده شده است.
+
+\subsection*{مهاجرت فاخته‌ها}
+در مهاجرت یک فاخته به سمت فاخته دیگر، مانند قبل می‌توان با استفاده از شبه-نرم تعریف شده فاصله دو فاخته را تخمین زد. بعد از تخمین فاصله آن‌ها با تابع احتمال یکنواخت کسری از آن را انتخاب می‌کنیم و فاخته را به سمت بهترین فاخته موجود حرکت می‌دهیم. برای حرکت دادن فقط بعضی از ژن‌های کروموزون‌ فاخته هدف را در فاخته اولیه جایگذاری می‌کنیم. همانطور که از مقاله اصلی توضیح داده شده است به مقدار نویز، انحراف، در حرکت دادن فاخته‌ها وجود دارد که برای اعمال آن، در برخی مراحل به صورت تصادفی بجای ژن‌های فاخته هدف، از یکی از همسایگان راس به صورت تصادفی استفاده می‌کنیم.
+\begin{latin}
+\begin{lstlisting}[style=lua]
+function getDiff(c1, c2)
+	diff = 0
+	for i in 0 .. n do
+		for j in 0 .. n do
+			if c1[i] == c1[j] && c2[i] != c[j] ||  c2[i] == c2[j] && c1[i] != c1[j] do
+				diff  += 1
+			end
+		end
+	end
+	return sqrt(diff)
+end
+
+function Immigrate(x,y)
+	xc, yc = communities of x and y repectively
+	numberOfGenomesToChange = getDiff(xc, yc) as int
+	
+	for _ in 0 ... numberOfGenomesToChange do
+		j = randomly selected vertex
+		if (a random uniform number) < deviation ratio then
+			x.genomes[j] = randomly selected vetex from adjcency list of j
+		else 
+			x.genomes[j] = y.genomes[j]
+		end
+	end
+	reuturn x	
+end
+\end{lstlisting}
+\end{latin}
+این توضیحات در فایل RandomWalk و تحت تابع Immigrate پیاده سازی شده‌اند.
+
+\subsection*{الگوریتم فاخته}
+الگوریتم به صورت ساده شده در هر تکرار شامل مراحل زیر است
+\begin{enumerate}
+\item
+تخم گذاری فاخته‌ها به این صورت که هر فاخته بین ۵ تا ۲۰ تخم در فاصله‌ مشخصی از خود می‌گذارد. این فاصله مشخص از روی ابعاد مسئله و نسبت‌ تخم‌های فاخته به کل تخم‌ها و همچنین پارامتر آلفا مشخص می‌شود. با افزایش‌ آلفا می‌توان شعاع تخم گذاری فاخته‌ها را افزایش داد. برای مثال در قسمت قبل دیدیم که می‌توان در پیاده سازی تابع تخم گذاری از $L$ یا $\sqrt{L}$ استفاده کنیم. در اینجا می‌توان دید که با تغییر آلفا می‌توان اثر پیاده‌سازی مختلف آن تابع را خنثی کرد. البته باید توجه داشت با توجه به غیر خطی بودن تابع جذر، اثر به طور کلی خنثی نمی‌شود و به هر حال در پیاده‌سازی با $\sqrt{L}$ شعاع تخم گذاری فاخته‌ها از واریانس کمتری برخوردار است.
+
+\item
+پیدا کردن بهترین تخم‌ها و از بین بردن تخم‌هایی که به اندازه کافی خوب نیستن.
+
+\item
+مهاجرت فاخته‌ها به سمت بهترین جواب مسئله.
+\end{enumerate}
+
+این مراحل به صورت کامل در تابع cuckooSearch در فایل CuckooOptimization پیاده شده اند.
+
+\section*{اجرای کد}
+
+\subsection*{ورودی‌ها}
+اسکریپ Console.py انتظار دارد گراف مسئله از طریق فایل graph.txt در کنار فایل اسکریپ فراهم شده باشد. خط اول ورودی تعداد راس‌ها و خط‌های بعدی هر کدام یک یال را باید معرفی کنند.
+
+\subsection*{خروجی}
+جدا از لاگ‌های برنامه‌، در آخر بهترین کروموزون‌، اجتماعات استخراج شده در خروجی چاپ خواهند شد. همچنین گراف رنگ‌آمیزی شده با استفاده از تجمع‌های مختلف با فرمت dot در فایل graph.dot نوشته می‌شود که با ابزار‌هایی مثل graphviz می‌توان آن را به نمایش گذاشت.
+
+در آخر نیز روند پیشرفت الگوریتم و بهترین $Q$ در هر مرحله به صورت نمودار نمایش داده می‌شود.
+
+
+
+
+
+\end{document}

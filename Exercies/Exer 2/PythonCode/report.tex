@@ -1,0 +1,349 @@
+% !TeX program = xelatex
+
+\documentclass{article}
+
+\usepackage[left=1in, right=1in, top=1in, bottom=1in]{geometry}
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\usepackage{mathtools}
+
+
+\usepackage{diagbox }
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+
+\lstdefinestyle{customc}{
+    language={C},
+    xleftmargin=\parindent,
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    emph={cost, level},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    captionpos=b,                    
+    keepspaces=true,                                  
+    showspaces=true,                
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
+\lstset{escapechar=@,style=customc}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+\fancyhead[R]{
+تمرین عملی سری دوم هوش مصنوعی
+}
+
+\usepackage{xepersian}
+\settextfont{XB Niloofar}
+
+\begin{document}
+\section*{UCS}
+این الگوریتم برای جدول‌های کوچک مثل جدول پایین، به خوبی در کسری از ثانیه جواب مورد نظر را پیدا می‌کند.
+
+\subsection*{ورودی اول}
+
+\begin{latin}
+\begin{lstlisting}
+running UCS on 
+	r3 r2 g2 
+	b1 r1 
+	g3
+	b3 b2 g1
+
+cost level 0 exceeded
+         number of nodes on this level: 1 from depth of 0 to 0 
+         new children nodes added: 7
+         branching factor: 7.0
+
+cost level 1 exceeded
+         number of nodes on this level: 7 from depth of 1 to 1 
+         new children nodes added: 42
+         branching factor: 6.0
+
+cost level 2 exceeded
+         number of nodes on this level: 32 from depth of 2 to 2
+         new children nodes added: 175
+         branching factor: 5.46875
+
+cost level 3 exceeded
+         number of nodes on this level: 108 from depth of 3 to 3
+         new children nodes added: 55
+         branching factor: 5.157407407407407
+
+cost level 4 exceeded
+         number of nodes on this level: 188 from depth of 4 to 4
+         new children nodes added: 982
+         branching factor: 5.223404255319149
+
+solved problem in 4 moves:
+[ (0 -> 2), (3 -> 2), (1 -> 0), (1 -> 3) ]
+
+total number of expanded nodes: 336
+
+result after applying moves:
+	r3 r2 r1
+	#
+	g3 g2 g1
+	b3 b2 b1
+\end{lstlisting}
+\end{latin}
+
+که با توجه به خروجی‌ها می‌توان دید برای مسئله‌ای که جواب در عمق $4$ و ضریب انشعاب بین $5$ تا $6$ است، تعداد 
+$336$
+نود بسط داده شده است که نشان می‌دهد الگوریتم اکثر نود‌های قبل از عمق چهار را بررسی می‌کند و در ابتدای بررسی نود های عمق چهار جواب را می‌یابد.
+
+
+\newpage
+\subsection*{ورودی دوم}
+
+برای مثالی کمی بزرگتر پیدا کردن خروجی توسط این الگوریتم حدود ۱۰ ثانیه طول می‌کشد.
+\begin{latin}
+\begin{lstlisting}
+running UCS on 
+	r4 r3 r2 g2
+	#
+	g4 b1 r1
+	g3
+	b4 b3 b2 g1
+
+
+cost level 0 exceeded
+         number of nodes on this level: 1 from depth of 0 to 0
+         new children nodes added: 11
+         branching factor: 11.0
+
+cost level 1 exceeded
+         number of nodes on this level: 11 from depth of 1 to 1
+         new children nodes added: 107
+         branching factor: 9.727272727272727
+
+cost level 2 exceeded
+         number of nodes on this level: 76 from depth of 2 to 2
+         new children nodes added: 686
+         branching factor: 9.026315789473685
+
+cost level 3 exceeded
+         number of nodes on this level: 396 from depth of 3 to 3
+         new children nodes added: 3421
+         branching factor: 8.63888888888889
+
+cost level 4 exceeded
+         number of nodes on this level: 1660 from depth of 4 to 4
+         new children nodes added: 13920
+         branching factor: 8.385542168674698
+
+cost level 5 exceeded
+         number of nodes on this level: 6043 from depth of 5 to 5
+         new children nodes added: 48991
+         branching factor: 8.107066026807876
+
+cost level 6 exceeded
+         number of nodes on this level: 19737 from depth of 6 to 6
+         new children nodes added: 156028
+         branching factor: 7.905355423823276
+
+cost level 7 exceeded
+         number of nodes on this level: 27545 from depth of 7 to 7
+         new children nodes added: 231093
+         branching factor: 8.389653294608822
+
+solved problem in 7 moves:
+[(0 -> 1), (2 -> 0), (2 -> 0), (3 -> 2), (1 -> 2), (4 -> 2), (0 -> 4)]
+
+total number of expanded nodes: 55469
+
+result after applying moves:
+	r4 r3 r2 r1
+	#
+	g4 g3 g2 g1
+	#
+	b4 b3 b2 b1
+\end{lstlisting}
+\end{latin}
+
+جواب مسئله در عمق ۷ پیدا شده و به طور متوسط ضریب انشعاب $8.45$ است. با توجه به این موارد برای پیدا کردن جواب حداقل $377,000$ و حداکثر $3,205,000$ نود بررسی شده است که با جواب مسئله $535,469$ همخوانی دارد.
+
+\newpage
+\subsection*{ورودی سوم - ورودی اصلی مسئله}
+برای این مسئله چون اندازه مسئله بزرگ است تقریبا بعد از ۱۰ دقیقه الگوریتم فقط تا عمق ۸ پیش ‌می‌رود که با توجه به اینکه جواب اصلی در عمق ۶۷ است، امکان رسیدن به جواب در زمان معقول وجود ندارد.
+\begin{latin}
+\begin{lstlisting}
+running UCS on 
+r6 g5 r5 y4
+y6 g2 r4 y3 g3 y2
+y1 g4 r1
+g6 g1 r2 y5 r3
+#
+
+cost level 0 exceeded
+         number of nodes on this level: 1 from depth of 0 to 0
+         new children nodes added: 10
+         branching factor: 10.0
+
+cost level 1 exceeded
+         number of nodes on this level: 10 from depth of 1 to 1
+         new children nodes added: 85
+         branching factor: 8.5
+
+cost level 2 exceeded
+         number of nodes on this level: 60 from depth of 2 to 2
+         new children nodes added: 483
+         branching factor: 8.05
+
+cost level 3 exceeded
+         number of nodes on this level: 286 from depth of 3 to 3
+         new children nodes added: 2294
+         branching factor: 8.020979020979022
+
+cost level 4 exceeded
+         number of nodes on this level: 1189 from depth of 4 to 4
+         new children nodes added: 9391
+         branching factor: 7.898233809924307
+
+cost level 5 exceeded
+         number of nodes on this level: 4464 from depth of 5 to 5
+         new children nodes added: 34167
+         branching factor: 7.653897849462366
+
+cost level 6 exceeded
+         number of nodes on this level: 15480 from depth of 6 to 6
+         new children nodes added: 117667
+         branching factor: 7.6012273901808785
+
+cost level 7 exceeded
+         number of nodes on this level: 50437 from depth of 7 to 7
+         new children nodes added: 380122
+         branching factor: 7.536570374923172
+
+cost level 8 exceeded
+         number of nodes on this level: 157284 from depth of 8 to 8
+         new children nodes added: 1167359
+         branching factor: 7.4219818926273495
+
+^C^C
+\end{lstlisting}
+\end{latin}
+
+با توجه به اینکه جواب در عمق ۶۷ است و ضریب انشعاب در حدود ۸ است بنابرین حداقل $10^{59}$ و حداکثر $10^{60}$ نود باید بررسی شود که غیر ممکن است.
+
+\newpage
+\section*{A*}
+
+\subsection*{تابع هیوریستیک}
+تابع هیوریستیک این بخش از ۲ بخش تشکیل شده. بخش اول خطای رنگ‌ها را بررسی میکند و بخش دوم خطای ترتیب کارت‌ها.
+با توجه به اینکه بیرون اوردن کارت سمت چپ از بقیه به عملگرهای بیشتری نیاز دارد بنابرین فرض میکنیم این کارت بی حرکت خواهد ماند. پس کارت‌هایی که رنگ آن‌ها با رنگ کارت سمت چپ متفاوت است باید جریمه شوند، میزان این جریمه برابر با تعداد کارت‌های روی کارت مورد نظر است.
+برای حساب کردن خطای ترتیب، برای هر کارت فاصله کارت با مکان آن در هر دسته را پیدا می‌کنیم. مجموع خطای رنگ و خطای ترتیب را تابع هیوریستیک در نظر میگیریم.
+
+
+\subsection*{ورودی اول}
+
+نسبت به الگوریتم قبلی برای مثال‌های کوچک مثل این مثال ۴۸ برابر سریع تر است.
+\begin{latin}
+\begin{lstlisting}
+running A* on 
+r3 r2 g2
+b1 r1
+g3
+b3 b2 g1
+
+cost level 12 exceeded
+         number of nodes on this level: 7 from depth of 0 to 4
+         new children nodes added: 51
+         branching factor: 7.285714285714286
+
+total number of expanded nodes: 7
+
+solved problem in 4 moves:
+[(0 -> 2), (1 -> 0), (3 -> 2), (1 -> 3)]
+\end{lstlisting}
+\end{latin}
+
+با توجه به عمق($d=4$) و تعداد نود‌های گسترش یافته($b = 7$) که از قبل یافت شده می‌توان ضریب موثر انشعاب را حساب کرد
+\begin{align*}
+\frac{N^d - 1}{N - 1} = b \rightarrow\ N = 1.3892
+\end{align*}
+
+\subsection*{ورودی دوم}
+برای این ورودی الگوریتم با این تابع هیوریستیک حدود $3900$ برابر راس های کمتری نسبت به الگوریتم معمولی گسترش داده است.
+
+\begin{latin}
+\begin{lstlisting}
+running A* on 
+r4 r3 r2 g2
+#
+g4 b1 r1
+g3
+b4 b3 b2 g1
+
+cost level 23 exceeded
+         number of nodes on this level: 14 from depth of 0 to 9
+         new children nodes added: 134
+         branching factor: 9.571428571428571
+
+total number of expanded nodes: 14
+
+solved problem in 9 moves:
+[(2 -> 0), (2 -> 4), (3 -> 2), (0 -> 4), (0 -> 2), (4 -> 0), (4 -> 0), (4 -> 2), (0 -> 4)]
+\end{lstlisting}
+\end{latin}
+
+با توجه به داده‌ها میتوان ضریب موثر انشعاب را نیز محاسبه کرد.
+\begin{align*}
+\left.\begin{array}{l}
+b = 14\\
+d = 9
+\end{array} \right\} \Rightarrow\ \frac{N^d - 1}{N - 1} = b \Rightarrow\ N = 1.10725
+\end{align*}
+
+
+
+\newpage
+\subsection*{ورودی سوم - ورودی اصلی مسئله}
+برای این مسئله جواب با بسط دادن تقریبا $15,000$ راس ظرف تقریبا ۴ ثانیه پیدا میشود در حالی که الگوریتم قبلی برای پیدا کردن جواب نیاز به بسط دادن جوابی از مربطه $10^{59}$ داشت. البته باید توجه داشت الگوریتم جواب بهینه را پیدا نکرده است و جواب بهینه در عمق $67$ است که نشان میدهد تابع هیوریستیک قابل قبول نیست.
+\begin{latin}
+\begin{lstlisting}
+running A* on
+r6 g5 r5 y4
+y6 g2 r4 y3 g3 y2
+y1 g4 r1
+g6 g1 r2 y5 r3
+#
+
+cost level 80 exceeded
+         number of nodes on this level: 15879 from depth of 0 to 71
+         new children nodes added: 132480
+         branching factor: 8.343094653315699
+
+total number of expanded nodes: 15879
+
+solved problem in 62 moves:
+[(2 -> 3), (0 -> 2), (1 -> 2), (1 -> 0), (2 -> 1), (3 -> 1), (3 -> 2), (1 -> 0), (1 -> 2), (0 -> 2), 
+(0 -> 1), (0 -> 4), (3 -> 4), (3 -> 4), (3 -> 1), (0 -> 3), (1 -> 2), (1 -> 3), (1 -> 3), (4 -> 3), 
+(1 -> 4), (1 -> 3), (2 -> 3), (4 -> 0), (4 -> 1), (0 -> 1), (4 -> 0), (1 -> 0), (2 -> 3), (2 -> 1), 
+(2 -> 0), (1 -> 0), (3 -> 0), (2 -> 1), (2 -> 1), (2 -> 1), (3 -> 0), (1 -> 0), (1 -> 4), (3 -> 4), 
+(3 -> 4), (3 -> 1), (4 -> 1), (4 -> 1), (3 -> 2), (4 -> 3), (2 -> 3), (1 -> 3), (1 -> 3), (0 -> 3), 
+(0 -> 3), (0 -> 3), (0 -> 1), (3 -> 1), (3 -> 0), (3 -> 1), (0 -> 1), (3 -> 0), (1 -> 3), (1 -> 3), 
+(1 -> 0), (3 -> 1)]
+\end{lstlisting}
+\end{latin}
+
+با توجه به داده‌ها میتوان ضریب موثر انشعاب را نیز محاسبه کرد.
+\begin{align*}
+\left.\begin{array}{l}
+b = 15879\\
+d = 71
+\end{array} \right\} \Rightarrow\ \frac{N^d - 1}{N - 1} = b \Rightarrow\ N = 1.111029
+\end{align*}
+
+در مجموع با توجه به اینکه در تمام موارد ضریب انشعاب بسیار نزدیک به یک است پس می‌توان گفت تابع الگوریتم را مستقیم به سمت هدف میبرد.
+
+
+\end{document}
